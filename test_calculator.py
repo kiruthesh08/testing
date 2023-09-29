@@ -1,40 +1,50 @@
-import unittest
 import pytest
-from calculator import calculate  # file name and my function calculate to be tested
+from calculator import calculate
 
-class TestCalculate(unittest.TestCase):
+# Test addition
+def test_addition():
+    assert calculate("2 + 3") == 5
 
-    def test_addition(self):
-        result = calculate("5+3")
-        self.assertEqual(result, 8)
+# Test subtraction
+def test_subtraction():
+    assert calculate("5 - 2") == 3
 
-    def test_subtraction(self):
-        result = calculate("10-4")
-        self.assertEqual(result, 6)
+# Test multiplication
+def test_multiplication():
+    assert calculate("4 * 6") == 24
 
-    def test_multiplication(self):
-        result = calculate("3*4")
-        self.assertEqual(result, 12)
+# Test division
+def test_division():
+    assert calculate("10 / 2") == 5
 
-    def test_division(self):
-        result = calculate("8/2")
-        self.assertEqual(result, 4)
+# Test exponentiation (^)
+def test_exponentiation():
+    assert calculate("2^3") == 8
 
-    def test_exponentiation(self):
-        result = calculate("2^3")
-        self.assertEqual(result, 8)
+# Test complex expression with parentheses
+def test_complex_expression():
+    assert calculate("(4 + 2) * 3 / 2 - 1") == 8
 
-    def test_complex_expression(self):
-        result = calculate("(5+3)*2")
-        self.assertEqual(result, 16)
+# Test division by zero
+def test_division_by_zero():
+    with pytest.raises(ZeroDivisionError):
+        calculate("5 / 0")
 
-    def test_complex_expression(self):
-        result = calculate("(9+3)*3")
-        self.assertEqual(result, 26) # check should fail as 26 is incorrect should be 36 
+# Test invalid input
+def test_invalid_input():
+    with pytest.raises(Exception):
+        calculate("2 + abc")
 
-    def test_invalid_input(self):
-        with self.assertRaises(Exception):
-            calculate("5/0")
-
-if __name__ == "__main__":
-    unittest.main()
+# Test an unexpected error
+def test_unexpected_error():
+    with pytest.raises(Exception):
+        calculate("2 / (2 - 2)")
+        
+    # Test the 'off' option to exit the program
+def test_exit_program(monkeypatch): #monkeypatch fixture allows you to modify or control certain behaviors during testing.
+    # Mock user input to simulate entering 'off'
+    monkeypatch.setattr('builtins.input', lambda _: 'off') # uses the monkeypatch fixture to temporarily modify the behavior of the input function. 
+                                                           #It replaces the input function with a lambda function that always returns the string 'off'. 
+    with pytest.raises(SystemExit) as excinfo: #sets up a context for testing exceptions using pytest.raises.SystemExit exception raised
+        calculate("off")  # Pass "off" as the argument
+    assert excinfo.type == SystemExit #verifies that an exception of type SystemExit was indeed raised 
